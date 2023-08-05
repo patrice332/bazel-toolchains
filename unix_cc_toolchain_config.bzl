@@ -29,66 +29,6 @@ load(
     "with_feature_set",
 )
 
-def _action_configs(ctx):
-    compile = action_config(
-        action_name = ACTION_NAMES.c_compile,
-        tools = [
-            struct(
-                type_name = "tool",
-                tool = ctx.file.clang,
-            ),
-        ],
-    )
-    compile_plus_plus = action_config(
-        action_name = ACTION_NAMES.cpp_compile,
-        tools = [
-            struct(
-                type_name = "tool",
-                tool = ctx.file.clang_plus_plus,
-            ),
-        ],
-    )
-    lto_backend = action_config(
-        action_name = ACTION_NAMES.lto_backend,
-        tools = [
-            struct(
-                type_name = "tool",
-                tool = ctx.file.clang_plus_plus,
-            ),
-        ],
-    )
-    link = action_config(
-        action_name = ACTION_NAMES.cpp_link_executable,
-        tools = [
-            struct(
-                type_name = "tool",
-                tool = ctx.file.ld,
-            ),
-        ],
-    )
-    ar = action_config(
-        action_name = ACTION_NAMES.cpp_link_static_library,
-        tools = [
-            struct(
-                type_name = "tool",
-                tool = ctx.file.ar,
-            ),
-        ],
-        implies = [
-            "archiver_flags",
-        ],
-    )
-    strip = action_config(
-        action_name = ACTION_NAMES.strip,
-        tools = [
-            struct(
-                type_name = "tool",
-                tool = ctx.file.strip,
-            ),
-        ],
-    )
-    return [compile, compile_plus_plus, lto_backend, link, ar, strip]
-
 def _target_os_version(ctx):
     platform_type = ctx.fragments.apple.single_arch_platform.platform_type
     xcode_config = ctx.attr._xcode_config[apple_common.XcodeVersionConfig]
@@ -207,6 +147,66 @@ lto_index_actions = [
     ACTION_NAMES.lto_index_for_dynamic_library,
     ACTION_NAMES.lto_index_for_nodeps_dynamic_library,
 ]
+
+def _action_configs(ctx):
+    rv = []
+    for c_compile_action in all_compile_actions:
+        if c_compile_action in all_cpp_compile_actions:
+            continue
+        rv.append(action_config(
+            action_name = c_compile_action,
+            tools = [
+                struct(
+                    type_name = "tool",
+                    tool = ctx.file.clang,
+                ),
+            ],
+        ))
+    for cc_compile_action in all_cpp_compile_actions:
+        rv.append(action_config(
+            action_name = cc_compile_action,
+            tools = [
+                struct(
+                    type_name = "tool",
+                    tool = ctx.file.clang_plus_plus,
+                ),
+            ],
+        ))
+
+    for link_action in all_link_actions:
+        rv.append(action_config(
+            action_name = link_action,
+            tools = [
+                struct(
+                    type_name = "tool",
+                    tool = ctx.file.ld,
+                ),
+            ],
+        ))
+
+    rv.append(action_config(
+        action_name = ACTION_NAMES.cpp_link_static_library,
+        tools = [
+            struct(
+                type_name = "tool",
+                tool = ctx.file.ar,
+            ),
+        ],
+        implies = [
+            "archiver_flags",
+        ],
+    ))
+
+    rv.append(action_config(
+        action_name = ACTION_NAMES.strip,
+        tools = [
+            struct(
+                type_name = "tool",
+                tool = ctx.file.strip,
+            ),
+        ],
+    ))
+    return rv
 
 def _sanitizer_feature(name = "", specific_compile_flags = [], specific_link_flags = []):
     return feature(

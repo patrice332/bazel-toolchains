@@ -3,8 +3,6 @@ load("//:unix_cc_toolchain_config.bzl", "cc_toolchain_config")
 
 package(default_visibility = ["//visibility:public"])
 
-filegroup(name = "empty")
-
 # Unfiltered compiler flags; these are placed at the end of the command
 # line, so take precendence over any user supplied flags through --copts or
 # such.
@@ -129,7 +127,8 @@ filegroup(
 
 cc_toolchain(
     name = "k8_toolchain",
-    all_files = ":empty",
+    all_files = "@linux-x86_64-toolchain//:bin",
+    ar_files = "@linux-x86_64-toolchain//:bin",
     compiler_files = ":compiler_files",
     dwp_files = "@linux-x86_64-toolchain//:bin",
     linker_files = ":linker_files",
