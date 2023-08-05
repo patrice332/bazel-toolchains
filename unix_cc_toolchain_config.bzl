@@ -48,6 +48,15 @@ def _action_configs(ctx):
             ),
         ],
     )
+    lto_backend = action_config(
+        action_name = ACTION_NAMES.lto_backend,
+        tools = [
+            struct(
+                type_name = "tool",
+                tool = ctx.file.clang_plus_plus,
+            ),
+        ],
+    )
     link = action_config(
         action_name = ACTION_NAMES.cpp_link_executable,
         tools = [
@@ -78,7 +87,7 @@ def _action_configs(ctx):
             ),
         ],
     )
-    return [compile, compile_plus_plus, link, ar, strip]
+    return [compile, compile_plus_plus, lto_backend, link, ar, strip]
 
 def _target_os_version(ctx):
     platform_type = ctx.fragments.apple.single_arch_platform.platform_type

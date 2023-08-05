@@ -40,7 +40,7 @@ dbg_compile_flags = [
 ]
 
 opt_compile_flags = [
-    "-g0",
+    "-g3",
     "-O2",
     "-D_FORTIFY_SOURCE=1",
     "-DNDEBUG",
@@ -135,7 +135,7 @@ cc_toolchain(
     linker_files = ":linker_files",
     objcopy_files = "@linux-x86_64-toolchain//:bin",
     strip_files = "@linux-x86_64-toolchain//:bin",
-    supports_param_files = False,
+    supports_param_files = True,
     toolchain_config = ":k8_toolchain_config",
     toolchain_identifier = "k8_toolchain_x86_64",
 )
