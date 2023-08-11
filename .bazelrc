@@ -1,4 +1,3 @@
-build --crosstool_top=@com_github_patrice332_bazel_toolchains//:clang_suite
-build --host_crosstool_top=@com_github_patrice332_bazel_toolchains//:clang_suite
+build --extra_toolchains=@com_github_patrice332_bazel_toolchains//:cc-toolchain-linux-x86_64
 build --incompatible_strict_action_env
-build --action_env=PATH=
+build --incompatible_enable_cc_toolchain_resolution

@@ -1,4 +1,4 @@
-load("@rules_cc//cc:defs.bzl", "cc_toolchain", "cc_toolchain_suite")
+load("@rules_cc//cc:defs.bzl", "cc_toolchain")
 load("//:unix_cc_toolchain_config.bzl", "cc_toolchain_config")
 
 package(default_visibility = ["//visibility:public"])
@@ -135,13 +135,24 @@ cc_toolchain(
     objcopy_files = "@linux-x86_64-toolchain//:bin",
     strip_files = "@linux-x86_64-toolchain//:bin",
     supports_param_files = True,
+    target_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
     toolchain_config = ":k8_toolchain_config",
     toolchain_identifier = "k8_toolchain_x86_64",
 )
 
-cc_toolchain_suite(
-    name = "clang_suite",
-    toolchains = {
-        "k8": ":k8_toolchain",
-    },
+toolchain(
+    name = "cc-toolchain-linux-x86_64",
+    exec_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+    target_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+    toolchain = ":k8_toolchain",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
 )
