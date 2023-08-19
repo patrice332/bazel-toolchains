@@ -125,9 +125,18 @@ filegroup(
     ],
 )
 
+filegroup(
+    name = "all_files",
+    srcs = [
+        "@linux-x86_64-toolchain//:bin",
+        "@linux-x86_64-toolchain//:lib",
+        "@linux-x86_64-toolchain//:include",
+    ],
+)
+
 cc_toolchain(
     name = "k8_toolchain",
-    all_files = "@linux-x86_64-toolchain//:bin",
+    all_files = ":all_files",
     ar_files = "@linux-x86_64-toolchain//:bin",
     compiler_files = ":compiler_files",
     dwp_files = "@linux-x86_64-toolchain//:bin",
